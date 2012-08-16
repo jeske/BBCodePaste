@@ -1,0 +1,21 @@
+{
+  "name": "BBCodePaste",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Paste HTML formatted clipboard text into BBCode.",
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  "permissions": [ "contextMenus" , "tabs" ],
+  "icons" : {
+  "16" : "icon.png",
+  "48" : "icon.png",
+  "128" : "icon.png"
+   },
+   "background" : {
+     "scripts" : [ "bbcodepaste.js" ]
+   },
+   "content_scripts" : [
+      { "matches" : ["http://*/*", "https://*/*"] , "js" : [ "content_script.js" ] }
+   ]
+}
