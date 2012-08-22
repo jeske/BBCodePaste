@@ -3,14 +3,17 @@
 
 // http://stackoverflow.com/questions/11973525/how-can-i-replace-a-selected-text-range-in-a-textarea-in-chrome
 
+// http://stackoverflow.com/questions/2920150/insert-text-at-cursor-in-a-content-editable-div
+
 
 var dActiveElement = null;
 
 function _dom_trackActiveElement(evt) {
-  console.log("focus focusevent ");
    if (evt && evt.target) {
       dActiveElement = evt.target;
-      console.log("focus on: " + dActiveElement.nodeName);
+      console.log("focus on: " + dActiveElement.nodeName + " id: " + dActiveElement.id);
+   } else {
+     console.log("focus else..");
    }
 }
 
@@ -19,14 +22,48 @@ if (document.addEventListener) {
 }
 
 function insertTextAtCursor(text) {
-    if (dActiveElement.nodeName =="TEXTAREA") {
+    console.log("insertTextAtCursor : " + text);
+    debugger
+
+    if (dActiveElement.nodeName.toUpperCase() == "TEXTAREA") {
+      console.log("selection in textarea!  id: " + dActiveElement.id);
+
       var ta = dActiveElement;
-      console.log("selection in textarea!");
+      var saveSelectionStart = ta.selectionStart;
+
       var newvalue = ta.value.slice(0,ta.selectionStart) + text + ta.value.slice(ta.selectionEnd,ta.length);
-      console.log("output : " + newvalue );
+      console.log("output : " + newvalue  + ", len : " + newvalue.length);
+      var newSelectionEnd = ta.selectionStart + text.length;
+
       ta.value = newvalue;
+      ta.selectionStart = ta.selectionEnd = (newSelectionEnd);       
     }
 }
+
+chrome.extension.onConnect.addListener(function(port) {
+  port.onMessage.addListener(function(msg) {
+      // do nothing...
+    });
+});
+
+
+chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.method == "getSelection") {
+      // alert(request.data);
+      
+      // pasteHTMLAtCaret("test");
+      insertTextAtCursor(request.data);
+      // replaceSelectedText("test");
+      
+      // sendResponse({data: document.getElementById('header').innerHTML});
+      sendResponse({}); // nothing
+    } else {
+      sendResponse({}); // snub them.
+    }
+});
+
+
+// JUNK ----------------------------------------
 
 function foo() {
 	alert("insert: " + text);
@@ -46,18 +83,3 @@ function foo() {
 	// range.insertNode( document.createTextNode(text) );
 	
 }
-
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-    if (request.method == "getSelection") {
-      // alert(request.data);
-      
-      // pasteHTMLAtCaret("test");
-      insertTextAtCursor(request.data);
-      // replaceSelectedText("test");
-      
-      // sendResponse({data: document.getElementById('header').innerHTML});
-      sendResponse({}); // nothing
-    } else {
-      sendResponse({}); // snub them.
-    }
-});
