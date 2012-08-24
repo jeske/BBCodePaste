@@ -22,8 +22,7 @@ if (document.addEventListener) {
 }
 
 function insertTextAtCursor(text) {
-    console.log("insertTextAtCursor : " + text);
-    debugger
+    console.log("insertTextAtCursor : " + text);    
 
     if (dActiveElement.nodeName.toUpperCase() == "TEXTAREA") {
       console.log("selection in textarea!  id: " + dActiveElement.id);

@@ -1,15 +1,63 @@
 
 var helper = null;
+var helperdiv = null;
 
 // how to access current page from background
 // http://stackoverflow.com/questions/2779579/in-background-html-how-can-i-access-current-web-page-to-get-dom
 
-
-function convertHTMLToBBCode(textinput) {
-  return "bbcode : " + textinput;
+function OutputStream() {
+  this.string = "";
+  this.add = function(content) { this.string += content; };
 }
 
 
+function convertHTMLToBBCode(textinput) {
+  var myStream = new OutputStream();
+  var myHTMLEmitter = new HTMLParseEmitter(myStream);
+
+  HTMLParseContent(textinput,myHTMLEmitter);
+
+  return myStream.string;
+}
+
+// <b> test <i> italics </i></b>
+
+function walkChildrenOf(node, os) {
+   var bbcodetag = null;
+
+   switch(node.nodeName.toUpperCase()) {
+     case "#TEXT":
+        console.log("   textnode : " + node.nodeValue);
+        os.add(node.nodeValue);
+        break;
+     case "B":
+        bbcodetag = "B";
+        break;
+     case "I":
+        bbcodetag = "I";
+        break;
+   }
+
+   // add the start of the bbcodetag...
+   if (bbcodetag != null) {
+      os.add("[" + bbcodetag + "]");
+   }
+   
+   // walk children...
+   var subnode = node.firstChild;
+   while(subnode) {
+      walkChildrenOf(subnode, os);
+      subnode = subnode.nextSibling;
+   }
+
+   // add the end of the bbcode tag...
+   if (bbcodetag != null) {
+      os.add("[/" + bbcodetag + "]");
+   }
+  
+
+   console.log("endtag : " + node.nodeName);
+}
 
 function bbcodePasteHandler(info, tab) {	
    // grab the clipboard data...
@@ -23,16 +71,30 @@ function bbcodePasteHandler(info, tab) {
 	   // helper.style.margin = "-100";
 	   document.body.appendChild(helper);
    }
+   if (helperdiv == null) {
+	   helperdiv = bg.document.createElement("div");
+           document.body.appendChild(helperdiv);
+   }
    
    helper.select(); 
    bg.document.execCommand("Paste");
    
    var data = helper.value;
    console.log("bbcode paste clipboard data: " + data);
+
+   helperdiv.innerHTML = data;
+   console.log("innerText = " + helperdiv.innerText);
+
+   // iterate the tags...
    
+   var myConvertedOutputStream = new OutputStream();
+   walkChildrenOf(helperdiv, myConvertedOutputStream);
+
    // convert the clipboard contents to BBCode...
 
-   var convertedData = convertHTMLToBBCode(data);
+   // var convertedData = convertHTMLToBBCode(data);
+   // var convertedData = helperdiv.innerText;
+   var convertedData = myConvertedOutputStream.string;
 
    // send the data to the page...
    chrome.tabs.sendMessage(tab.id, {method: "getSelection", data: convertedData }, function(response) {

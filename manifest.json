@@ -2,15 +2,13 @@
   "name": "BBCodePaste",
   "version": "1.0",
   "manifest_version": 2,
-  "description": "Paste HTML formatted clipboard text into BBCode.",
-  "browser_action": {
-    "default_icon": "icon.png"
-  },
+  "description": "Add a content menu to paste HTML formatted clipboard text as BBCode.",
+
   "permissions": [ "contextMenus" , "tabs", "clipboardRead" ],
   "icons" : {
-  "16" : "icon.png",
-  "48" : "icon.png",
-  "128" : "icon.png"
+   "16" : "bbcodepasteicon.png",
+   "48" : "bbcodepasteicon.png",
+  "128" : "bbcodepasteicon.png"
    },
    "background" : {
      "scripts" : [ "bbcodepaste.js" ]
