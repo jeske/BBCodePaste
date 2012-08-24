@@ -1,0 +1,40 @@
+
+
+- Handle default phpBB BBcode tags - https://www.phpbb.com/support/documentation/3.0/userguide/user_posting.php
+  - [quote] [/quote], [quote="Named Quote"]
+
+  - unordered list : [list], [*]
+  - ordered list : [list=], [*]
+  - [color=#0044FF]
+  - [size=85]
+
+  - [flash=width,height]http://youtube.com/foo[/flash]
+
+
+- working on...
+  
+
+- Detect and handle optional tags
+
+  - [indent]  [/indent]
+  - [spoiler] [/spoiler]
+  - [youtube] [/youtube]
+
+- supported
+  - b
+  - i
+  - [u] [/u]
+  - [url=http://www.google.com]Google Search[/url]
+  - [img=http://www.google.com/foo.jpg]Caption[/img]
+  - [code]
+
+
+Test Fragment:
+
+<b> Bold </b>
+<i> Italics </i>
+<img src="http://www.google.com/foo.jpg"></img>
+<a href="http://www.google.com">Google Search</a>
+<pre>Test test </pre>
+
+

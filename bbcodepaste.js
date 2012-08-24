@@ -22,7 +22,7 @@ function convertHTMLToBBCode(textinput) {
 
 // <b> test <i> italics </i></b>
 
-function walkChildrenOf(node, os) {
+function bbCodeTagMapper(node, os) {
    var bbcodetag = null;
 
    switch(node.nodeName.toUpperCase()) {
@@ -31,17 +31,48 @@ function walkChildrenOf(node, os) {
         os.add(node.nodeValue);
         break;
      case "B":
+        os.add("[B]");
         bbcodetag = "B";
         break;
      case "I":
+        os.add("[I]");
         bbcodetag = "I";
+        break;
+     case "U":
+        os.add("[U]");
+        bbcodetag = "U";
+        break;
+     case "UL":
+        os.add("[LIST]");
+        bbcodetag = "LIST";
+        break;
+     case "LI":
+        os.add("[*]");
+        bbcodetag = "*";
+        break;
+     case "OL":
+        os.add("[LIST=]");
+        bbcodetag = "*";
+        break;
+     case "A":
+        os.add("[URL=" + node.href + "]");
+        bbcodetag = "URL";
+        break;
+     case "IMG":
+        os.add("[IMG=" + node.src + "]");
+        bbcodetag = "IMG";
+        break;
+     case "PRE":
+        os.add("[CODE]");
+        bbcodetag = "CODE";
         break;
    }
 
-   // add the start of the bbcodetag...
-   if (bbcodetag != null) {
-      os.add("[" + bbcodetag + "]");
-   }
+   return bbcodetag;
+}
+
+function walkChildrenOf(node, os) {
+   var bbcodetag = bbCodeTagMapper(node, os);
    
    // walk children...
    var subnode = node.firstChild;
