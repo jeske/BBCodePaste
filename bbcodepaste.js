@@ -154,7 +154,9 @@ function bbcodePasteHandler(info, tab) {
 	  if (response) { 
 		  console.log("BBCodePaste response: " + JSON.stringify(response));
 	  } else {
-	  	  console.log("BBCodePaste empty response");
+      console.log("BBCodePaste empty response");
+      alert("BBCodePaste couldn't talk to page helper. Check extension settings.")
+	  
 	  }
 	});
    
@@ -175,7 +177,7 @@ chrome.contextMenus.create(
      {"title" : "BBCode Paste",
       "id" : "BBCodePaste_context_menu",
       "onclick" : bbcodePasteHandler,
-      "contexts" : ["all", "editable"]      
+      "contexts" : ["editable"]      
     });
 
 // A generic onclick callback function.

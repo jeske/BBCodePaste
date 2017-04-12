@@ -40,6 +40,8 @@ function insertTextAtCursor(text) {
 
       ta.value = newvalue;
       ta.selectionStart = ta.selectionEnd = (newSelectionEnd);       
+    } else {
+      alert("BBCodePaste only works in TEXTAREA fields.")
     }
 }
 
