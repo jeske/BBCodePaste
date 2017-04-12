@@ -1,6 +1,6 @@
 {
   "name": "BBCodePaste",
-  "version": "1.2",
+  "version": "1.3",
   "manifest_version": 2,
   "description": "Add a context menu to paste HTML formatted clipboard text as BBCode.",
 
