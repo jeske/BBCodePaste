@@ -2,7 +2,7 @@
   "name": "BBCodePaste",
   "version": "1.2",
   "manifest_version": 2,
-  "description": "Add a content menu to paste HTML formatted clipboard text as BBCode.",
+  "description": "Add a context menu to paste HTML formatted clipboard text as BBCode.",
 
   "permissions": [ "contextMenus" , "tabs", "clipboardRead" ],
   "icons" : {
