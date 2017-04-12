@@ -1,3 +1,7 @@
+// BBCodePaste
+// Authored by David W. Jeske
+// Licensed as free open-source in the Public Domain
+
 
 var helper = null;
 var helperdiv = null;

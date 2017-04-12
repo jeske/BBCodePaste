@@ -1,3 +1,7 @@
+// BBCodePaste
+// Authored by David W. Jeske
+// Licensed as free open-source in the Public Domain
+
 
 // a content-script listener to paste-over the current selection
 
