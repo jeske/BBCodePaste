@@ -5,6 +5,19 @@
 // how to access current page from background
 // http://stackoverflow.com/questions/2779579/in-background-html-how-can-i-access-current-web-page-to-get-dom
 
+// NOTE: We use a background back to read from the clipboard, and then pass the content to the 
+// in-page content_script using message passing. 
+// 
+// NOTE: It looks like as of sometime in 2014, it should be possible to read/write the clipboard directly from a 
+// content_script.
+// https://bugs.chromium.org/p/chromium/issues/detail?id=395376
+//
+// NOTE: This page reads from the clipboard and sends to the page context. If you are going the other direction,
+// reading formatted HTML from the page and sending it to the clipboard, you would want to use execCommand('copy')
+// directly inside content_script, NOT by sending it to a background page. That's because using a background page
+// would require injecting "untrusted" html directly into your background page DOM, where it would
+// have access to the elevated permissions of the background page.
+
 function OutputStream() {
   this.string = "";
   this.add = function(content) { this.string += content; };
