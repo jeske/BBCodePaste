@@ -46,12 +46,14 @@ function insertTextAtCursor(text) {
 chrome.extension.onConnect.addListener(function(port) {
   port.onMessage.addListener(function(msg) {
       // do nothing...
+      console.log("BBCodePaste: connected");
     });
 });
 
 
 chrome.extension.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.method == "getSelection") {
+      console.log("BBCodePaste: getSelection message received");
       // alert(request.data);
       
       // pasteHTMLAtCaret("test");
@@ -86,3 +88,5 @@ function foo() {
 	// range.insertNode( document.createTextNode(text) );
 	
 }
+
+console.log("BBCodePaste: loaded...");

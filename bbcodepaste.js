@@ -2,10 +2,6 @@
 // Authored by David W. Jeske
 // Licensed as free open-source in the Public Domain
 
-
-var helper = null;
-var helperdiv = null;
-
 // how to access current page from background
 // http://stackoverflow.com/questions/2779579/in-background-html-how-can-i-access-current-web-page-to-get-dom
 
@@ -31,7 +27,7 @@ function bbCodeTagMapper(node, os) {
 
    switch(node.nodeName.toUpperCase()) {
      case "#TEXT":
-        console.log("   textnode : " + node.nodeValue);
+        console.log("BBCodePaste:   textnode : " + node.nodeValue);
         os.add(node.nodeValue);
         break;
      case "B":
@@ -91,14 +87,20 @@ function walkChildrenOf(node, os) {
    }
   
 
-   console.log("endtag : " + node.nodeName);
+   console.log("BBCodePaste: endtag : " + node.nodeName);
 }
 
 function bbcodePasteHandler(info, tab) {	
    // grab the clipboard data...
    bg = chrome.extension.getBackgroundPage();
 
-   if (helper === null) {
+   bg.document.body.innerHTML= ""; // clear the background page
+
+   var helper = null;
+   var helperdiv = null;
+   
+
+   if (helper == null) {
 	   helper = bg.document.createElement("textarea");
 	   helper.style.position = "absolute";
 	   helper.style.border = "none";
@@ -109,16 +111,32 @@ function bbcodePasteHandler(info, tab) {
    if (helperdiv == null) {
 	   helperdiv = bg.document.createElement("div");
            document.body.appendChild(helperdiv);
+           helperdiv.contentEditable = true;
    }
    
-   helper.select(); 
-   bg.document.execCommand("Paste");
-   
-   var data = helper.value;
-   console.log("bbcode paste clipboard data: " + data);
+   if (false) {
+    // this grab plain text from the clipboard
+    helper.select(); 
+    bg.document.execCommand("Paste");
+    
+    var data = helper.value;
+    console.log("bbcode paste clipboard data: " + data);
 
-   helperdiv.innerHTML = data;
-   console.log("innerText = " + helperdiv.innerText);
+    helperdiv.innerHTML = data;
+    console.log("innerText = " + helperdiv.innerText);
+   } else {
+    // this will grab HTML formatted text from the clipboard
+    helperdiv.innerHTML=""; // clear the buffer    
+    var range = document.createRange();
+    range.selectNode(helperdiv);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    helperdiv.focus();    
+    bg.document.execCommand("Paste");
+    console.log("innerHTML = " + helperdiv.innerHTML);
+   }
+
+   
 
    // iterate the tags...
    
@@ -134,9 +152,9 @@ function bbcodePasteHandler(info, tab) {
    // send the data to the page...
    chrome.tabs.sendMessage(tab.id, {method: "getSelection", data: convertedData }, function(response) {
 	  if (response) { 
-		  console.log(response.data);
+		  console.log("BBCodePaste response: " + JSON.stringify(response));
 	  } else {
-	  	  console.log("empty response");
+	  	  console.log("BBCodePaste empty response");
 	  }
 	});
    
@@ -155,10 +173,10 @@ chrome.extension.onRequest.addListener(function(request,sender,sendResponse) {
 
 chrome.contextMenus.create(
      {"title" : "BBCode Paste",
-      "contexts" : ["editable"],
-      "onclick" : bbcodePasteHandler });
-      
-      
+      "id" : "BBCodePaste_context_menu",
+      "onclick" : bbcodePasteHandler,
+      "contexts" : ["all", "editable"]      
+    });
 
 // A generic onclick callback function.
 
@@ -170,8 +188,8 @@ function genericOnClick(info, tab) {
   console.log("tab: " + JSON.stringify(tab));
   
 	chrome.tabs.sendMessage(tab.id, {method: "getSelection", data: "test123" }, function(response) {
-	  if (response) { 
-		  console.log(response.data);
+	  if (response) {       
+		  console.log("BBCodePaste response: " + response);
 	  } else {
 	  	  console.log("empty response");
 	  }
@@ -186,4 +204,8 @@ chrome.contextMenus.create(
 
 */
       
-      
+    
+
+// NOTES solving problem with context menu not appearing in incognito
+//
+//  http://stackoverflow.com/questions/21075987/chrome-extension-context-menu-does-not-persist
